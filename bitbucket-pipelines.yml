@@ -1,0 +1,51 @@
+image: node:16
+
+definitions:
+  caches:
+    npm: $HOME/.npm
+  steps: 
+    - step: &deploy-storybook
+        caches:
+          - node
+          - npm
+        name: 'Deploy storybook'
+        script:
+          - export NODE_OPTIONS=--max_old_space_size=3072
+          - npm i
+          - npm run lint
+          - npm run test
+          - npm run build-storybook
+          - npm install netlify-cli@12.7.2 --save-dev
+          - ./node_modules/netlify-cli/bin/run.mjs --telemetry-disable
+          - ./node_modules/netlify-cli/bin/run.mjs deploy --dir=./storybook-static --site=$NETLIFY_SITE_ID
+            --auth=$NETLIFY_AUTH_TOKEN --prod
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - node
+          - npm
+        name: Run linter and tests
+        script:
+          - npm i
+          - npm run lint
+          - npm run test
+
+  tags:
+    release-*:
+      - step:
+          <<: *deploy-storybook
+
+      - step:
+          caches:
+            - node
+            - npm
+          name: 'Deploy package to release branch'
+          script:
+            - sh scripts/buildPackage/buildPackage.sh ${BITBUCKET_TAG//release-v/}
+    
+  custom:
+    deploy-storybook: 
+      - step:
+          <<: *deploy-storybook

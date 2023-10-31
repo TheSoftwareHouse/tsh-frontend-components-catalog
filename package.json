@@ -1,0 +1,81 @@
+{
+  "name": "tsh-frontend-components",
+  "author": "The Software House",
+  "license": "ISC",
+  "description": "TSH Frontend Components",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "jest  --passWithNoTests",
+    "lint": "eslint \"./packages/**/*.{ts,tsx}\" && stylelint --allow-empty-input \"./packages/**/*.{css,pcss,scss}\" && echo \"lint success\"",
+    "lint:fix": "eslint --fix \"./packages/**/*.{ts,tsx}\" && stylelint --fix \"./packages/**/*.{css,pcss,scss}\" && echo \"lint success\"",
+    "prepare": "husky install",
+    "typecheck": "tsc --noEmit && echo \"typecheck success\"",
+    "prettier": "prettier . --fix",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "init": "node packages/cli/index.js init",
+    "copy": "node packages/cli/index.js copy"
+  },
+  "dependencies": {
+    "@emotion/react": "11.11.1",
+    "@emotion/styled": "11.11.0",
+    "@mui/material": "5.14.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "17.7.1",
+    "@commitlint/config-conventional": "17.7.0",
+    "@storybook/addon-essentials": "7.3.2",
+    "@storybook/addon-interactions": "7.3.2",
+    "@storybook/addon-links": "7.3.2",
+    "@storybook/addon-onboarding": "1.0.8",
+    "@storybook/blocks": "7.3.2",
+    "@storybook/react": "7.3.2",
+    "@storybook/react-vite": "7.3.2",
+    "@storybook/testing-library": "0.2.0",
+    "@types/react": "18.2.15",
+    "@types/react-dom": "18.2.7",
+    "@typescript-eslint/eslint-plugin": "6.0.0",
+    "@typescript-eslint/parser": "6.0.0",
+    "@vitejs/plugin-react": "4.0.3",
+    "eslint": "8.45.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-prettier": "5.0.0",
+    "eslint-plugin-react": "7.33.2",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "eslint-plugin-react-refresh": "0.4.3",
+    "eslint-plugin-storybook": "0.6.13",
+    "eslint-plugin-unused-imports": "3.0.0",
+    "husky": "8.0.3",
+    "jest": "^29.6.3",
+    "lint-staged": "14.0.1",
+    "prettier": "3.0.2",
+    "rollup-plugin-node-polyfills": "0.2.1",
+    "storybook": "7.3.2",
+    "storybook-dark-mode": "3.0.1",
+    "stylelint": "15.10.3",
+    "stylelint-config-recommended": "13.0.0",
+    "typescript": "5.0.2",
+    "vite": "4.4.5",
+    "vite-tsconfig-paths": "4.2.0"
+  },
+  "lint-staged": {
+    "packages/**/*.{js,jsx,ts,tsx,md}": [
+      "eslint --fix"
+    ],
+    "packages/**/*.json": [
+      "prettier --write"
+    ],
+    "packages/**/*.{css,pcss,scss}": [
+      "stylelint --fix",
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=16.19.0"
+  }
+}
