@@ -17,9 +17,9 @@
 
 ## 📘 Project context
 
-Knowledge sharing and develpoment process acceleration are the backbone of this project. In this repository you can find components that can be trated as an inspiration or starter point for production graded code.
+Knowledge sharing and development process acceleration are the backbone of this project. In this repository you can find components that can be treated as an inspiration or starter point for production graded code.
 
-Main assumption is that custom MUI based components in this repository should be versitale and easy to configure in your current project.
+Main assumption is that custom MUI based components in this repository should be versatile and easy to configure in your current project.
 
 This project has also a CLI that can be used to copy components directly to your project.
 
