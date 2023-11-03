@@ -1,0 +1,6 @@
+{
+  "name": "InputMask",
+  "componentsDependencies": [],
+  "directoryName": "maskInput",
+  "packagesDependencies": ["@mui/material", "@emotion/styled", "@emotion/react"]
+}

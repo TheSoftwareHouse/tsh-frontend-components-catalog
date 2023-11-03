@@ -1,0 +1,6 @@
+{
+  "name": "Carousel (react-slick)",
+  "directoryName": "slickCarousel",
+  "componentsDependencies": [],
+  "packagesDependencies": ["react-slick", "@types/react-slick", "slick-carousel"]
+}

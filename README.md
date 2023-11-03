@@ -12,7 +12,10 @@
     - [Component copy](#component-copy)
 - [🛃 Development \& Conventions](#-development--conventions)
   - [File system](#file-system)
+  - [schema.json](#schemajson)
 - [🔥 Deployment](#-deployment)
+  - [Building the package](#building-the-package)
+  - [Storybook hosting](#storybook-hosting)
 
 
 ## 📘 Project context
@@ -97,6 +100,8 @@ npm run copy
 
 And follow steps that are visible in your console.
 
+As a default, Storybook file (`*.stories.tsx`) is selected to be copied, if your project doesn't have Storybook set up, hit `N` button in CLI wizard at 3rd step.
+
 ___
 
 ## 🛃 Development & Conventions
@@ -105,7 +110,7 @@ ___
 
 In order to keep CLI running, new components should be kept in separate directories in `packages/components`. Example:
 
-If you would like to add `Input` component, create:
+If you would like to add `Input` component, create directory and name it as the component (lowercased):
 
 ```
 packages/components/input
@@ -113,10 +118,45 @@ packages/components/input
 
 And add files in that directory. 
 
+### schema.json
+
+In order to manage components dependencies (both libraries and other components), we created a `packages/schema.json` file to keep it in one place.
+If you are adding new component, you have to declare it in that file.
+
+Example:
+I've created a `<List/>` component that have `<ListItem/>` as a dependency, and it is based on MUI library. Schema for that component may look like that:
+
+`packages/schema.json`
+```
+...
+components: [
+  ...,
+  {
+    "name": "List",
+    "componentsDependencies": ["ListItem"],
+    "packagesDependencies": ["@mui/material"]
+  }
+]
+...
+```
+
+**Important! Component which isn't declared in `schema.json` won't show up in CLI copy list.**
 ___
 
 ## 🔥 Deployment
 
+### Building the package
+
+In current version, CLI is bundled with components in one package. In order to build the end-product, you have to run command:
+
+```
+npn run build-cli
+```
+
+It will transform Typescript source code of CLI to Javascript and copy components directory to `dist`.
+
+### Storybook hosting
+ 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/7a89d9c3-1e97-493c-9ce4-14538ef3fe6e/deploy-status)](https://app.netlify.com/sites/tangerine-valkyrie-6f47b8/deploys)
 
 
