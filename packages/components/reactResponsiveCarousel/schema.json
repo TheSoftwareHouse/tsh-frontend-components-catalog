@@ -1,0 +1,6 @@
+{
+  "name": "Carousel (react-responsive-carousel)",
+  "componentsDependencies": [],
+  "directoryName": "ReactResponsiveCarousel",
+  "packagesDependencies": ["react-responsive-carousel"]
+}
