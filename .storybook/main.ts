@@ -4,7 +4,7 @@ import { default as viteTsConfigPaths } from 'vite-tsconfig-paths';
 
 /** @type {import('@storybook/builder-vite').StorybookViteConfig} */
 module.exports = {
-  stories: ['../packages/**/*.stories.mdx', '../packages/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: ['../packages/components/**/*.stories.mdx', '../packages/components/**/*.stories.@(js|jsx|ts|tsx)'],
 
   addons: [
     '@storybook/addon-links',
@@ -39,6 +39,7 @@ module.exports = {
         rollupOptions: {
           plugins: [rollupNodePolyFill()],
         },
+        chunkSizeWaringLimit: '1mb',
       },
     };
 
