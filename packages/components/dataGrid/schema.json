@@ -1,0 +1,6 @@
+{
+  "name": "Data grid",
+  "directoryName": "dataGrid",
+  "componentsDependencies": [],
+  "packagesDependencies": ["@mui/material", "@tanstack/react-table"]
+}

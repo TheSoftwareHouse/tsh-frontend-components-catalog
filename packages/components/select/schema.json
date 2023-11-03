@@ -1,0 +1,6 @@
+{
+  "name": "Select (bounded with URL state)",
+  "directoryName": "select",
+  "componentsDependencies": [],
+  "packagesDependencies": ["@mui/material", "react-router-dom"]
+}

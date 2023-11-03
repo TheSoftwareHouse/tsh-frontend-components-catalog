@@ -1,0 +1,6 @@
+{
+  "name": "Dropzone",
+  "componentsDependencies": [],
+  "directoryName": "dropzone",
+  "packagesDependencies": ["react-hook-form", "react-dropzone"]
+}
