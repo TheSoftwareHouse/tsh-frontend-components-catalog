@@ -8,16 +8,16 @@ import { logger } from '../utils/logger';
 import {
   settingsJsonOutputPath,
   defaultEncoding,
-  componentsDirectoryPath,
   jsonFileExtenstion,
   storiesFileExtenstion,
+  packageVersion,
 } from '../shared/constants';
 import { generatePath } from '../utils/generatePath';
 import { installDependencies } from '../utils/installDependencies';
-import { isDirectoryEmpty } from '../utils/isDirectoryEmpty';
-import { copyDirectoryWithExclusion } from '../utils/copyDirectoryWithExclusion';
 import { PromptSelectChoices, PromptsNames, SettingsFile } from '../types/index';
 import { promptsMap } from '../shared/prompts';
+import { copyAwsFolderWithExclusion } from '../utils/copyAwsFolderWithExclusion';
+import { getBucketContent } from '../utils/getBucketContent';
 
 const getCopyPrompts = ({
   projectsChoices,
@@ -58,10 +58,12 @@ copy
     const componentsChoices: PromptSelectChoices = [];
     const { components, getComponentByName } = getSchema();
 
+    const { pathList, Contents } = await getBucketContent();
+
     try {
       components.forEach(({ name, directoryName }) => {
-        const directoryPath = generatePath({ basePath: componentsDirectoryPath, targetPath: directoryName });
-        const isEmpty = isDirectoryEmpty(directoryPath);
+        const directoryPath = generatePath({ basePath: `${packageVersion}/`, targetPath: directoryName });
+        const isEmpty = !pathList?.includes(directoryPath);
 
         if (isEmpty) return;
 
@@ -80,7 +82,6 @@ copy
     }
 
     const copyPrompts = getCopyPrompts({ projectsChoices, componentsChoices });
-
     const results = await prompts(copyPrompts, { onCancel: () => process.exit(0) });
     const { path: outputPath, packageManager } = results.project ?? projectsChoices[0].value;
     const destinationDirectory = `${outputPath}/${path.basename(results.srcPath)}`;
@@ -89,8 +90,9 @@ copy
       : [jsonFileExtenstion];
 
     try {
-      copyDirectoryWithExclusion({
-        sourceDirectory: results.srcPath,
+      copyAwsFolderWithExclusion({
+        Contents,
+        folderPath: results.srcPath,
         destinationDirectory,
         excludedExtensions,
       });
@@ -109,5 +111,11 @@ copy
 
     if (!component) return;
 
-    await installDependencies({ component, outputPath, packageManager });
+    await installDependencies({
+      component,
+      packageManager,
+      Contents,
+      pathList,
+      destinationDirectory,
+    });
   });

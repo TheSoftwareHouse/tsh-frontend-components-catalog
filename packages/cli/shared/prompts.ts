@@ -8,7 +8,7 @@ import { packageManagers, promptTypes } from './constants';
 export const promptsMap = {
   [PromptsNames.Packages]: (packages: string[]) => ({
     name: PromptsNames.Packages,
-    message: `Which packages used by that component would you like to instal?`,
+    message: `Which packages used by that component would you like to install?`,
     type: promptTypes.multiselect,
     choices: packages.map((packageName) => ({ value: packageName, title: packageName })),
     instructions: false,

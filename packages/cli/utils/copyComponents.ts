@@ -1,40 +1,49 @@
 import prompts from 'prompts';
-import path from 'path';
+import { ListObjectsV2Output } from '@aws-sdk/client-s3';
 
-import { componentsDirectoryPath, jsonFileExtenstion, storiesFileExtenstion } from '../shared/constants';
+import { jsonFileExtenstion, packageVersion, storiesFileExtenstion } from '../shared/constants';
 import { promptsMap } from '../shared/prompts';
-import { PromptsNames } from '../types/index';
+import { PathList, PromptsNames } from '../types/index';
 
 import { logger } from './logger';
 import { generatePath } from './generatePath';
-import { isDirectoryEmpty } from './isDirectoryEmpty';
-import { copyDirectoryWithExclusion } from './copyDirectoryWithExclusion';
+import { copyAwsFolderWithExclusion } from './copyAwsFolderWithExclusion';
 
-export const copyComponents = async (componentsNames: string[], outputPath: string) => {
+type CopyComponentsArguments = {
+  componentsDependencies: string[];
+  Contents: ListObjectsV2Output['Contents'];
+  destinationDirectory: string;
+  pathList: PathList;
+};
+
+export const copyComponents = async ({
+  componentsDependencies,
+  Contents,
+  pathList,
+  destinationDirectory,
+}: CopyComponentsArguments) => {
   try {
-    componentsNames.forEach(async (componentName) => {
-      const componentPath = generatePath({
-        basePath: componentsDirectoryPath,
-        targetPath: componentName.toLowerCase(),
-      });
-      const isEmpty = isDirectoryEmpty(componentPath);
+    for (const name of componentsDependencies) {
+      const directoryPath = generatePath({ basePath: `${packageVersion}/`, targetPath: name });
+      const isEmpty = !pathList?.includes(directoryPath);
 
       if (isEmpty) throw Error();
 
-      const destinationDirectory = path.join(outputPath, componentName.toLocaleLowerCase());
       const { shouldIncludeStories } = await prompts([promptsMap[PromptsNames.ShouldIncludeStories]], {
         onCancel: () => process.exit(0),
       });
+
       const excludedExtensions = !shouldIncludeStories
         ? [jsonFileExtenstion, storiesFileExtenstion]
         : [jsonFileExtenstion];
 
-      copyDirectoryWithExclusion({
-        sourceDirectory: componentPath,
+      copyAwsFolderWithExclusion({
+        Contents,
+        folderPath: directoryPath,
         destinationDirectory,
         excludedExtensions,
       });
-    });
+    }
   } catch (error) {
     logger.error('There is no component to copy');
   }
