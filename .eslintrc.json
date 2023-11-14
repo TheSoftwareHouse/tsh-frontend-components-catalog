@@ -1,0 +1,64 @@
+{
+  "extends": [
+    "plugin:react-hooks/recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "plugin:storybook/recommended"
+  ],
+  "plugins": [
+    "prettier",
+    "import",
+    "unused-imports"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "unused-imports/no-unused-imports": "error",
+    "prettier/prettier": [
+      "error"
+    ],
+    "no-console": "warn",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/display-name": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/no-default-export": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          [
+            "external",
+            "builtin"
+          ],
+          [
+            "parent",
+            "internal"
+          ],
+          [
+            "index",
+            "sibling"
+          ]
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "{}": false
+        },
+        "extendDefaults": true
+      }
+    ]
+  }
+}
