@@ -8,8 +8,8 @@ import { logger } from '../utils/logger';
 import {
   settingsJsonOutputPath,
   defaultEncoding,
-  jsonFileExtenstion,
-  storiesFileExtenstion,
+  jsonFileExtension,
+  storiesFileExtension,
   packageVersion,
 } from '../shared/constants';
 import { generatePath } from '../utils/generatePath';
@@ -18,12 +18,16 @@ import { PromptSelectChoices, PromptsNames, SettingsFile } from '../types/index'
 import { promptsMap } from '../shared/prompts';
 import { copyAwsFolderWithExclusion } from '../utils/copyAwsFolderWithExclusion';
 import { getBucketContent } from '../utils/getBucketContent';
+import { installComponentsDependencies } from '../utils/installComponentsDependencies';
 
 const getCopyPrompts = ({
   projectsChoices,
   componentsChoices,
 }: Record<string, PromptSelectChoices>): PromptObject<string>[] => {
-  const prompts = [promptsMap[PromptsNames.SrcPath](componentsChoices), promptsMap[PromptsNames.ShouldIncludeStories]];
+  const prompts = [
+    promptsMap[PromptsNames.SrcPath](componentsChoices),
+    promptsMap[PromptsNames.ShouldIncludeStories](),
+  ];
 
   if (projectsChoices.length > 1) {
     prompts.unshift(promptsMap[PromptsNames.Project](projectsChoices));
@@ -86,8 +90,8 @@ copy
     const { path: outputPath, packageManager } = results.project ?? projectsChoices[0].value;
     const destinationDirectory = `${outputPath}/${path.basename(results.srcPath)}`;
     const excludedExtensions = !results.shouldIncludeStories
-      ? [jsonFileExtenstion, storiesFileExtenstion]
-      : [jsonFileExtenstion];
+      ? [jsonFileExtension, storiesFileExtension]
+      : [jsonFileExtension];
 
     try {
       copyAwsFolderWithExclusion({
@@ -109,9 +113,14 @@ copy
 
     const component = getComponentByName(copiedComponentName);
 
-    if (!component) return;
+    if (!component || !pathList) return;
 
     await installDependencies({
+      component,
+      packageManager,
+    });
+
+    await installComponentsDependencies({
       component,
       packageManager,
       Contents,
