@@ -1,4 +1,4 @@
-name: Deploy to staging
+name: Deploy components to S3
 on:
   workflow_dispatch:
 
@@ -18,11 +18,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build-storybook
-      - name: Deploy
-        run: aws s3 sync ./storybook-static s3://${{ secrets.S3_BUCKET }} --delete
-      - name: Invalidate Cloudfront
-        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION }} --paths "/*"
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Deploy Components
+        run:
+          aws s3 sync ./packages/components s3://${{ secrets.S3_BUCKET_COMPONENT_ITEMS }}/${{steps.package-version.outputs.current-version}} --delete
