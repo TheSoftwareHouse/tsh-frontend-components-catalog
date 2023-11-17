@@ -9,8 +9,8 @@ export const componentsDirectoryPath = path.resolve(__filename, '../components')
 export const defaultEncoding = 'utf-8';
 export const settingsJsonOutputPath = `${currentPath}/cli.settings.json`;
 export const schemaFileName = 'schema.json';
-export const storiesFileExtenstion = '.stories.tsx';
-export const jsonFileExtenstion = '.json';
+export const storiesFileExtension = '.stories.tsx';
+export const jsonFileExtension = '.json';
 export const promptTypes = {
   multiselect: 'multiselect',
   select: 'select',
