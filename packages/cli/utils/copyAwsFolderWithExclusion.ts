@@ -32,10 +32,9 @@ export const copyAwsFolderWithExclusion = async ({
 
   try {
     const getContentsByFolderPath = Contents.filter((content) => content.Key?.includes(folderPath));
-
     for (const object of getContentsByFolderPath) {
-      if (excludedExtensions.length && excludedExtensions.some((extension) => object.Key?.includes(extension))) {
-        return;
+      if (excludedExtensions.length && excludedExtensions.some((extension) => object.Key?.endsWith(extension))) {
+        continue;
       }
 
       const getObjectItem = await getS3Object(COMPONENT_ITEMS_BUCKET, object.Key as string);
