@@ -23,6 +23,8 @@ export const packageManagers = ['npm', 'yarn'];
 /* eslint-disable @typescript-eslint/no-var-requires */
 export const { version: packageVersion } = require('../../../package.json');
 
-export const COMPONENT_ITEMS_BUCKET = process.env.S3_BUCKET_COMPONENT_ITEMS || '';
+export const COMPONENT_ITEMS_BUCKET = process.env.S3_BUCKET_COMPONENT_ITEMS || 'tsh-frontend-components-items-catalog';
 
 export const EXCLUDED_BASE_S3_PATHS = [`${packageVersion}/.`, `${packageVersion}/`, `.`];
+
+export const MAXIMUM_COMPONENTS_DIR_POSTFIX = 10;
