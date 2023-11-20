@@ -26,7 +26,3 @@ jobs:
         run: aws s3 sync ./storybook-static s3://${{ secrets.S3_BUCKET }} --delete
       - name: Invalidate Cloudfront
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION }} --paths "/*"
-      - name: Publish package on NPM
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
