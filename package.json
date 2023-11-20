@@ -3,13 +3,17 @@
   "author": "The Software House",
   "license": "ISC",
   "description": "TSH Frontend Components",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
   "type": "module",
   "publishConfig": { "access": "public" },
   "files": [
     "*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/TheSoftwareHouse/tsh-frontend-components-catalog.git"
+  },
   "scripts": {
     "test": "jest  --passWithNoTests",
     "lint": "eslint \"./packages/**/*.{ts,tsx}\" && stylelint --allow-empty-input \"./packages/**/*.{css,pcss,scss}\" && echo \"lint success\"",
