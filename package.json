@@ -3,7 +3,7 @@
   "author": "The Software House",
   "license": "ISC",
   "description": "TSH Frontend Components",
-  "private": false,
+  "private": true,
   "version": "1.0.0",
   "type": "module",
   "publishConfig": { "access": "public" },
