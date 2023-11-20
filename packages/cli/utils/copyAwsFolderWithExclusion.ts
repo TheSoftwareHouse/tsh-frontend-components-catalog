@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { ListObjectsV2Output } from '@aws-sdk/client-s3';
 
-import { COMPONENT_ITEMS_BUCKET, packageVersion } from '../shared/constants';
+import { COMPONENT_ITEMS_BUCKET } from '../shared/constants';
 
 import { getS3Object } from './getS3Object';
 import { logger } from './logger';
@@ -38,12 +38,10 @@ export const copyAwsFolderWithExclusion = async ({
       }
 
       const getObjectItem = await getS3Object(COMPONENT_ITEMS_BUCKET, object.Key as string);
-      const destinationDirName = `${path.dirname(destinationDirectory)}/`;
-      const filePath = `${destinationDirName}${object.Key?.replace(packageVersion, '')}`;
-      const dirName = `${destinationDirName}${path.dirname(object.Key || '').replace(packageVersion, '')}`;
+      const filePath = `${destinationDirectory}/${path.basename(object.Key || '')}`;
 
-      if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName, { recursive: true });
+      if (!fs.existsSync(destinationDirectory)) {
+        fs.mkdirSync(destinationDirectory, { recursive: true });
       }
 
       if (!fs.existsSync(filePath) && getObjectItem) {

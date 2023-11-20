@@ -11,6 +11,7 @@ import {
   jsonFileExtension,
   storiesFileExtension,
   packageVersion,
+  MAXIMUM_COMPONENTS_DIR_POSTFIX,
 } from '../shared/constants';
 import { generatePath } from '../utils/generatePath';
 import { installDependencies } from '../utils/installDependencies';
@@ -94,10 +95,22 @@ copy
     }
 
     for (const resultSrcPath of results.srcPath) {
-      const destinationDirectory = `${outputPath}/${path.basename(resultSrcPath)}`;
+      let destinationDirectory = `${outputPath}/${path.basename(resultSrcPath)}`;
+      const componentDirName = path.basename(resultSrcPath).replace(packageVersion + '/', '');
+
       const excludedExtensions = !results.shouldIncludeStories
         ? [jsonFileExtension, storiesFileExtension]
         : [jsonFileExtension];
+
+      if (fs.existsSync(destinationDirectory)) {
+        for (let index = 1; index < MAXIMUM_COMPONENTS_DIR_POSTFIX; index++) {
+          const componentDirWithPostfix = `${componentDirName}_${index}`;
+          if (!fs.existsSync(destinationDirectory.replace(componentDirName, componentDirWithPostfix))) {
+            destinationDirectory = `${outputPath}/${componentDirWithPostfix}`;
+            break;
+          }
+        }
+      }
 
       try {
         await copyAwsFolderWithExclusion({
