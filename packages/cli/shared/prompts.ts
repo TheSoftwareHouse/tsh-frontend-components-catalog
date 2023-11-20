@@ -5,6 +5,10 @@ import { highlightText } from '../utils/highlightText';
 
 import { packageManagers, promptTypes } from './constants';
 
+const MULTISELECT_HINT = `${highlightText('SPACE')} to select | ${highlightText('ENTER')} to submit | ${highlightText(
+  'A',
+)} to select/unselect all`;
+
 export const promptsMap = {
   [PromptsNames.Packages]: (packages: string[], componentName?: string) => ({
     name: PromptsNames.Packages,
@@ -14,9 +18,7 @@ export const promptsMap = {
     type: promptTypes.multiselect,
     choices: packages.map((packageName) => ({ value: packageName, title: packageName })),
     instructions: false,
-    hint: `${highlightText('SPACE')} to select | ${highlightText('ENTER')} to submit | ${highlightText(
-      'A',
-    )} to select/unselect all`,
+    hint: MULTISELECT_HINT,
   }),
   [PromptsNames.ShouldCopyComponents]: (components: string) => ({
     name: PromptsNames.ShouldCopyComponents,
@@ -37,10 +39,12 @@ export const promptsMap = {
     initial: 'my-current-project',
   },
   [PromptsNames.SrcPath]: (componentsChoices: PromptSelectChoices) => ({
-    type: promptTypes.select,
     name: PromptsNames.SrcPath,
-    message: `Which ${highlightText('component')} would you like to copy?`,
+    message: `Which ${highlightText('components')} would you like to copy?`,
+    type: promptTypes.multiselect,
     choices: componentsChoices,
+    instructions: false,
+    hint: MULTISELECT_HINT,
   }),
   [PromptsNames.ShouldIncludeStories]: (componentName?: string) => ({
     type: promptTypes.confirm,

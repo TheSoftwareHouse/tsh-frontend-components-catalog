@@ -24,14 +24,13 @@ const getCopyPrompts = ({
   projectsChoices,
   componentsChoices,
 }: Record<string, PromptSelectChoices>): PromptObject<string>[] => {
-  const prompts = [
-    promptsMap[PromptsNames.SrcPath](componentsChoices),
-    promptsMap[PromptsNames.ShouldIncludeStories](),
-  ];
+  const prompts = [];
 
   if (projectsChoices.length > 1) {
-    prompts.unshift(promptsMap[PromptsNames.Project](projectsChoices));
+    prompts.push(promptsMap[PromptsNames.Project](projectsChoices));
   }
+
+  prompts.push(promptsMap[PromptsNames.SrcPath](componentsChoices), promptsMap[PromptsNames.ShouldIncludeStories]());
 
   return prompts;
 };
@@ -88,43 +87,51 @@ copy
     const copyPrompts = getCopyPrompts({ projectsChoices, componentsChoices });
     const results = await prompts(copyPrompts, { onCancel: () => process.exit(0) });
     const { path: outputPath, packageManager } = results.project ?? projectsChoices[0].value;
-    const destinationDirectory = `${outputPath}/${path.basename(results.srcPath)}`;
-    const excludedExtensions = !results.shouldIncludeStories
-      ? [jsonFileExtension, storiesFileExtension]
-      : [jsonFileExtension];
 
-    try {
-      copyAwsFolderWithExclusion({
-        Contents,
-        folderPath: results.srcPath,
-        destinationDirectory,
-        excludedExtensions,
-      });
-
-      logger.success(`Component was successfully copied to: ${destinationDirectory}`);
-    } catch (error) {
-      logger.error("Couldn't copy selected component, try again");
+    if (results.srcPath.length === 0) {
+      logger.error('No component has been selected, try again');
       process.exit(0);
     }
 
-    const copiedComponentName = componentsChoices.find(({ value }) => value === results.srcPath)?.title;
+    for (const resultSrcPath of results.srcPath) {
+      const destinationDirectory = `${outputPath}/${path.basename(resultSrcPath)}`;
+      const excludedExtensions = !results.shouldIncludeStories
+        ? [jsonFileExtension, storiesFileExtension]
+        : [jsonFileExtension];
 
-    if (typeof copiedComponentName !== 'string') return;
+      try {
+        await copyAwsFolderWithExclusion({
+          Contents,
+          folderPath: resultSrcPath,
+          destinationDirectory,
+          excludedExtensions,
+        });
 
-    const component = getComponentByName(copiedComponentName);
+        logger.success(`Component was successfully copied to: ${destinationDirectory}`);
+      } catch (error) {
+        logger.error("Couldn't copy selected component, try again");
+        process.exit(0);
+      }
 
-    if (!component || !pathList) return;
+      const copiedComponentName = componentsChoices.find(({ value }) => value === resultSrcPath)?.title;
 
-    await installDependencies({
-      component,
-      packageManager,
-    });
+      if (typeof copiedComponentName !== 'string') return;
 
-    await installComponentsDependencies({
-      component,
-      packageManager,
-      Contents,
-      pathList,
-      destinationDirectory,
-    });
+      const component = getComponentByName(copiedComponentName);
+
+      if (!component || !pathList) return;
+
+      await installDependencies({
+        component,
+        packageManager,
+      });
+
+      await installComponentsDependencies({
+        component,
+        packageManager,
+        Contents,
+        pathList,
+        destinationDirectory,
+      });
+    }
   });
