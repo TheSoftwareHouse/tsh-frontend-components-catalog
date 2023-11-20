@@ -38,3 +38,5 @@ export enum PackageManagers {
   Npm = 'npm',
   Yarn = 'yarn',
 }
+
+export type PathList = Array<string | undefined>;
