@@ -5,16 +5,20 @@ import { highlightText } from '../utils/highlightText';
 
 import { packageManagers, promptTypes } from './constants';
 
+const MULTISELECT_HINT = `${highlightText('SPACE')} to select | ${highlightText('ENTER')} to submit | ${highlightText(
+  'A',
+)} to select/unselect all`;
+
 export const promptsMap = {
-  [PromptsNames.Packages]: (packages: string[]) => ({
+  [PromptsNames.Packages]: (packages: string[], componentName?: string) => ({
     name: PromptsNames.Packages,
-    message: `Which packages used by that component would you like to instal?`,
+    message: `Which packages used by ${
+      componentName ? `${highlightText(componentName)}` : 'that component'
+    } would you like to install?`,
     type: promptTypes.multiselect,
     choices: packages.map((packageName) => ({ value: packageName, title: packageName })),
     instructions: false,
-    hint: `${highlightText('SPACE')} to select | ${highlightText('ENTER')} to submit | ${highlightText(
-      'A',
-    )} to select/unselect all`,
+    hint: MULTISELECT_HINT,
   }),
   [PromptsNames.ShouldCopyComponents]: (components: string) => ({
     name: PromptsNames.ShouldCopyComponents,
@@ -35,17 +39,21 @@ export const promptsMap = {
     initial: 'my-current-project',
   },
   [PromptsNames.SrcPath]: (componentsChoices: PromptSelectChoices) => ({
-    type: promptTypes.select,
     name: PromptsNames.SrcPath,
-    message: `Which ${highlightText('component')} would you like to copy?`,
+    message: `Which ${highlightText('components')} would you like to copy?`,
+    type: promptTypes.multiselect,
     choices: componentsChoices,
+    instructions: false,
+    hint: MULTISELECT_HINT,
   }),
-  [PromptsNames.ShouldIncludeStories]: {
+  [PromptsNames.ShouldIncludeStories]: (componentName?: string) => ({
     type: promptTypes.confirm,
     name: PromptsNames.ShouldIncludeStories,
-    message: `Would you like to copy ${highlightText('Storybook (*.stories.tsx)')} files as well?`,
+    message: `Would you like to copy ${highlightText('Storybook (*.stories.tsx)')} files ${
+      componentName ? `for ${highlightText(componentName)} ` : ''
+    }as well?`,
     initial: true,
-  },
+  }),
   [PromptsNames.Project]: (projectsChoices: PromptSelectChoices) => ({
     type: promptTypes.select,
     name: PromptsNames.Project,

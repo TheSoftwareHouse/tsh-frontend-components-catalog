@@ -156,8 +156,5 @@ npn run build-cli
 It will transform Typescript source code of CLI to Javascript and copy components directory to `dist`.
 
 ### Storybook hosting
- 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/7a89d9c3-1e97-493c-9ce4-14538ef3fe6e/deploy-status)](https://app.netlify.com/sites/tangerine-valkyrie-6f47b8/deploys)
 
-
-Storybook is currently hosted at https://tangerine-valkyrie-6f47b8.netlify.app
+Storybook is currently hosted at https://dz6s1m3491km4.cloudfront.net/

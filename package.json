@@ -4,7 +4,7 @@
   "license": "ISC",
   "description": "TSH Frontend Components",
   "private": false,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "publishConfig": { "access": "public" },
   "files": [

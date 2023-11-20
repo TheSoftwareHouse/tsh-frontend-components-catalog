@@ -9,12 +9,20 @@ export const componentsDirectoryPath = path.resolve(__filename, '../components')
 export const defaultEncoding = 'utf-8';
 export const settingsJsonOutputPath = `${currentPath}/cli.settings.json`;
 export const schemaFileName = 'schema.json';
-export const storiesFileExtenstion = '.stories.tsx';
-export const jsonFileExtenstion = '.json';
+export const storiesFileExtension = '.stories.tsx';
+export const jsonFileExtension = '.json';
 export const promptTypes = {
   multiselect: 'multiselect',
   select: 'select',
   confirm: 'confirm',
   text: 'text',
 } as const;
+
 export const packageManagers = ['npm', 'yarn'];
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+export const { version: packageVersion } = require('../../../package.json');
+
+export const COMPONENT_ITEMS_BUCKET = process.env.S3_BUCKET_COMPONENT_ITEMS || '';
+
+export const EXCLUDED_BASE_S3_PATHS = [`${packageVersion}/.`, `${packageVersion}/`, `.`];
