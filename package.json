@@ -1,11 +1,15 @@
 {
-  "name": "tsh-frontend-components",
+  "name": "@tsh/frontend-components",
   "author": "The Software House",
   "license": "ISC",
   "description": "TSH Frontend Components",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "publishConfig": { "access": "public" },
+  "files": [
+    "*"
+  ],
   "scripts": {
     "test": "jest  --passWithNoTests",
     "lint": "eslint \"./packages/**/*.{ts,tsx}\" && stylelint --allow-empty-input \"./packages/**/*.{css,pcss,scss}\" && echo \"lint success\"",
