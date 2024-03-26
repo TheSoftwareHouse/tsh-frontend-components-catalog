@@ -1,118 +1,117 @@
 import { Meta, StoryFn } from '@storybook/react';
-import { getCoreRowModel, useReactTable, getPaginationRowModel, createColumnHelper } from '@tanstack/react-table';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { MRT_ColumnDef, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { useQuery } from '@tanstack/react-query';
+import { BrowserRouter, useSearchParams } from 'react-router-dom';
 
-import { Table } from './Table';
-import { ExampleType, exampleData, getDataMockHandler, getDataMock } from './Table.mock';
-import { useTableState } from './hooks/useTableState';
+import { ExampleType, getDataMock } from './Table.mock';
+import { useStateDataGridParams } from './hooks/useStateDataGridParams';
+import { DataGridRequestParams, DataGridResponse } from './types';
+import { useRouterDataGridParams } from './hooks/useRouterDataGridParams';
 
 // QUERY PROVIDER DECORATOR REQUIRED TO USE THIS COMPONENT (in storybook/preview.js)
 
 export default {
   title: 'DataGrid',
-  component: Table,
-} as Meta<typeof Table>;
+  component: MaterialReactTable,
+} as Meta<typeof MaterialReactTable>;
 
-const columnHelper = createColumnHelper<ExampleType>();
-
-const getColumns = () => [
-  columnHelper.accessor('date', {
-    header: () => 'Date',
-    cell: ({ getValue }) => <div>{getValue()}</div>,
+const columns: MRT_ColumnDef<ExampleType>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
     enableSorting: false,
-  }),
-
-  columnHelper.accessor('id', {
-    header: () => 'ID',
-    cell: ({ getValue }) => <div>{getValue()}</div>,
-    enableSorting: false,
-  }),
-
-  columnHelper.accessor('email', {
-    header: () => 'Email',
-    cell: ({ getValue }) => <div>{getValue() || '-'}</div>,
-    enableSorting: false,
-  }),
-
-  columnHelper.accessor('amount', {
-    header: () => 'Amount',
-    cell: ({ getValue }) => <div>{getValue()}</div>,
-    enableSorting: false,
-  }),
-
-  columnHelper.accessor('status', {
-    header: () => 'Status',
-    cell: ({ row }) => {
-      return <div>{row.original.status}</div>;
-    },
-    enableSorting: false,
-  }),
+  },
+  {
+    accessorKey: 'firstName',
+    header: 'First Name',
+  },
+  {
+    accessorKey: 'lastName',
+    header: 'Last Name',
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email',
+  },
 ];
 
-const BasicTemplate: StoryFn<typeof Table> = (args) => {
-  const pagination = args.isPaginationShown ? getPaginationRowModel() : undefined;
+const useExampleDataSource = (requestParams: DataGridRequestParams) => {
+  return useQuery<DataGridResponse<ExampleType>>(['data', requestParams], () => getDataMock(requestParams), {
+    keepPreviousData: true,
+  });
+};
 
-  const table = useReactTable({
-    getPaginationRowModel: pagination,
-    getCoreRowModel: getCoreRowModel(),
-    columns: getColumns(),
-    data: exampleData,
+const BasicTemplate: StoryFn = () => {
+  const { dataGridRequestParams, onChange, state } = useStateDataGridParams<ExampleType>();
+
+  const { data, isLoading, isRefetching } = useExampleDataSource(dataGridRequestParams);
+
+  const table = useMaterialReactTable({
+    columns,
+    data: data?.data ?? [],
+    initialState: { showColumnFilters: true },
+    manualFiltering: true, //turn off built-in client-side filtering
+    manualPagination: true, //turn off built-in client-side pagination
+    manualSorting: true, //turn off built-in client-side sorting
+    enableMultiSort: true,
+    isMultiSortEvent: () => true,
+    ...onChange,
+    rowCount: data?.meta.pagination.total,
+    state: {
+      ...state,
+      isLoading,
+      showProgressBars: isRefetching,
+    },
   });
 
-  return <Table {...args} table={table} />;
+  return <MaterialReactTable table={table} />;
 };
 
 export const Basic = BasicTemplate.bind({});
-Basic.args = {
-  isLoading: false,
-};
 
-export const LoadingState = BasicTemplate.bind({});
-LoadingState.args = {
-  isLoading: true,
-};
+const RouterTemplate: StoryFn = () => {
+  const [searchParams] = useSearchParams();
 
-export const WithPagination = BasicTemplate.bind({});
-WithPagination.args = {
-  isPaginationShown: true,
-};
+  const { dataGridRequestParams, onChange, state } = useRouterDataGridParams<ExampleType>();
 
-const AsyncContent: StoryFn<typeof Table> = (args) => {
-  const { pagination, setPagination, pageSize } = useTableState();
+  const { data, isLoading, isRefetching } = useExampleDataSource(dataGridRequestParams);
 
-  const { data, isLoading } = useQuery(['data', pagination], () =>
-    getDataMock({ page: pagination.pageIndex, size: pageSize }),
-  );
-  const inputData = data?.page ?? [];
-  const table = useReactTable({
-    pageCount: data?.meta.totalPages,
-    manualPagination: true,
+  const table = useMaterialReactTable({
+    columns,
+    data: data?.data ?? [],
+    initialState: { showColumnFilters: true },
+    manualFiltering: true, //turn off built-in client-side filtering
+    manualPagination: true, //turn off built-in client-side pagination
+    manualSorting: true, //turn off built-in client-side sorting
+    enableMultiSort: true,
+    isMultiSortEvent: () => true,
+    ...onChange,
+    rowCount: data?.meta.pagination.total,
     state: {
-      pagination,
+      ...state,
+      isLoading,
+      showProgressBars: isRefetching,
     },
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    columns: getColumns(),
-    data: inputData,
   });
 
-  return <Table {...args} table={table} isPaginationShown isLoading={isLoading} />;
-};
-
-const AsyncTemplate: StoryFn<typeof Table> = (args) => {
   return (
     <>
-      <AsyncContent {...args} />
-      <ReactQueryDevtools />
+      <div>
+        {Array.from(searchParams.entries()).map(([key, value]) => (
+          <p key={key}>
+            {key}: {value}
+          </p>
+        ))}
+      </div>
+      <MaterialReactTable table={table} />
     </>
   );
 };
 
-export const Async = AsyncTemplate.bind({});
-Async.args = {};
-Async.parameters = {
-  msw: {
-    handlers: [getDataMockHandler],
-  },
-};
+const RouterTemplateWithRouter = () => (
+  <BrowserRouter>
+    <RouterTemplate />
+  </BrowserRouter>
+);
+
+export const RouterState = RouterTemplateWithRouter.bind({});
